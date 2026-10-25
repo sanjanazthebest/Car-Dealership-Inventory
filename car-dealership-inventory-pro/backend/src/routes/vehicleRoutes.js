@@ -1,0 +1,11 @@
+const router=require('express').Router();const {body,param,query}=require('express-validator');const validate=require('../middleware/validate');const asyncHandler=require('../utils/asyncHandler');const c=require('../controllers/vehicleController');const {auth,requireRole}=require('../middleware/auth');
+router.use(auth);
+router.get('/search', [query('minPrice').optional().isFloat({min:0}),query('maxPrice').optional().isFloat({min:0}),query('page').optional().isInt({min:1}),query('limit').optional().isInt({min:1,max:100}),validate],asyncHandler(c.list));
+router.get('/',[query('minPrice').optional().isFloat({min:0}),query('maxPrice').optional().isFloat({min:0}),query('page').optional().isInt({min:1}),query('limit').optional().isInt({min:1,max:100}),validate],asyncHandler(c.list));
+router.get('/:id',[param('id').isMongoId(),validate],asyncHandler(c.getOne));
+router.post('/',requireRole('admin'),[body('make').trim().notEmpty().isLength({max:80}),body('model').trim().notEmpty().isLength({max:80}),body('category').trim().notEmpty().isLength({max:50}),body('price').isFloat({min:0}),body('quantity').isInt({min:0}),body('year').optional().isInt({min:1886,max:new Date().getFullYear()+2}),body('description').optional().isString().isLength({max:2000}),validate],asyncHandler(c.create));
+router.put('/:id',requireRole('admin'),[param('id').isMongoId(),body('make').optional().trim().notEmpty().isLength({max:80}),body('model').optional().trim().notEmpty().isLength({max:80}),body('category').optional().trim().notEmpty().isLength({max:50}),body('price').optional().isFloat({min:0}),body('quantity').optional().isInt({min:0}),validate],asyncHandler(c.update));
+router.delete('/:id',requireRole('admin'),[param('id').isMongoId(),validate],asyncHandler(c.remove));
+router.post('/:id/purchase',[param('id').isMongoId(),body('quantity').optional().isInt({min:1,max:100}),validate],asyncHandler(c.purchase));
+router.post('/:id/restock',requireRole('admin'),[param('id').isMongoId(),body('quantity').isInt({min:1,max:100000}),body('note').optional().isString().isLength({max:300}),validate],asyncHandler(c.restock));
+module.exports=router;

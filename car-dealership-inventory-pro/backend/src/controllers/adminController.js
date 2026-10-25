@@ -1,0 +1,2 @@
+const AuditLog=require('../models/AuditLog');
+exports.audit=async(req,res)=>{const page=Math.max(1,Number.parseInt(req.query.page,10)||1),limit=Math.min(100,Math.max(1,Number.parseInt(req.query.limit,10)||20));const [logs,total]=await Promise.all([AuditLog.find().populate('actor','name email').populate('vehicle','make model').sort({createdAt:-1}).skip((page-1)*limit).limit(limit).lean(),AuditLog.countDocuments()]);res.json({success:true,data:{logs},meta:{page,limit,total,pages:Math.ceil(total/limit)}});};

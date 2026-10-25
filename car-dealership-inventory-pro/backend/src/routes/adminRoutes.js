@@ -1,0 +1,1 @@
+const router=require('express').Router();const asyncHandler=require('../utils/asyncHandler');const {auth,requireRole}=require('../middleware/auth');const c=require('../controllers/adminController');router.get('/audit-logs',auth,requireRole('admin'),asyncHandler(c.audit));module.exports=router;

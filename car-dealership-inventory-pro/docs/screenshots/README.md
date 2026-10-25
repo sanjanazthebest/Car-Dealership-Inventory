@@ -1,0 +1,1 @@
+Add genuine screenshots here after running the frontend and backend. Suggested: login/register, inventory search/filter, customer purchase, admin add/edit/restock, purchase history. Reference them from the root README.

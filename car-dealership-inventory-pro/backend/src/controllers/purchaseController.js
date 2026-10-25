@@ -1,0 +1,2 @@
+const Purchase=require('../models/Purchase');
+exports.mine=async(req,res)=>{const page=Math.max(1,Number.parseInt(req.query.page,10)||1),limit=Math.min(50,Math.max(1,Number.parseInt(req.query.limit,10)||10));const [items,total]=await Promise.all([Purchase.find({user:req.user._id}).sort({createdAt:-1}).skip((page-1)*limit).limit(limit).lean(),Purchase.countDocuments({user:req.user._id})]);res.json({success:true,data:{purchases:items},meta:{page,limit,total,pages:Math.ceil(total/limit)}});};

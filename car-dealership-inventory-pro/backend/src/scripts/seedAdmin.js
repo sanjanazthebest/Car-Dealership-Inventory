@@ -1,0 +1,4 @@
+require('dotenv').config({
+  path: require('path').resolve(__dirname, '../../.env')
+});const connectDB=require('../config/db');const User=require('../models/User');
+(async()=>{try{await connectDB();const {ADMIN_NAME,ADMIN_EMAIL,ADMIN_PASSWORD}=process.env;if(!ADMIN_EMAIL||!ADMIN_PASSWORD||ADMIN_PASSWORD.length<12)throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD (at least 12 characters) in .env');let user=await User.findOne({email:ADMIN_EMAIL.toLowerCase()}).select('+password');if(user){user.name=ADMIN_NAME||'Administrator';user.password=ADMIN_PASSWORD;user.role='admin';await user.save();}else user=await User.create({name:ADMIN_NAME||'Administrator',email:ADMIN_EMAIL,password:ADMIN_PASSWORD,role:'admin'});console.log(`Admin account ready: ${user.email}`);await require('mongoose').disconnect();}catch(e){console.error(e.message);process.exit(1);}})();

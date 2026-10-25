@@ -1,0 +1,2 @@
+require('dotenv').config();const app=require('./app');const connectDB=require('./config/db');const port=Number(process.env.PORT)||5000;
+connectDB().then(()=>{const server=app.listen(port,()=>console.log(`AutoLot API listening on ${port}`));const shutdown=()=>server.close(()=>require('mongoose').connection.close().finally(()=>process.exit(0)));process.on('SIGINT',shutdown);process.on('SIGTERM',shutdown);}).catch(err=>{console.error('Database connection failed:',err.message);process.exit(1);});

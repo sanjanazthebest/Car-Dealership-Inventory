@@ -1,0 +1,4 @@
+const User=require('../models/User'); const signToken=require('../utils/token');
+exports.register=async(req,res)=>{const {name,email,password}=req.body; const user=await User.create({name,email,password,role:'customer'}); const safe={id:user._id,name:user.name,email:user.email,role:user.role}; res.status(201).json({success:true,data:{user:safe,token:signToken(user)}});};
+exports.login=async(req,res)=>{const email=String(req.body.email||'').toLowerCase().trim(); const password=String(req.body.password||''); const user=await User.findOne({email}).select('+password'); if(!user || !(await user.comparePassword(password))) return res.status(401).json({success:false,error:{code:'INVALID_CREDENTIALS',message:'Email or password is incorrect.'},requestId:req.id}); res.json({success:true,data:{user:{id:user._id,name:user.name,email:user.email,role:user.role},token:signToken(user)}});};
+exports.me=async(req,res)=>res.json({success:true,data:{user:req.user}});

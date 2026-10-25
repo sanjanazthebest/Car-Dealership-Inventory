@@ -1,0 +1,3 @@
+const router=require('express').Router();const {body}=require('express-validator');const validate=require('../middleware/validate');const asyncHandler=require('../utils/asyncHandler');const c=require('../controllers/authController');const {auth}=require('../middleware/auth');
+router.post('/register',[body('name').trim().isLength({min:2,max:80}),body('email').isEmail().normalizeEmail(),body('password').isString().isLength({min:10,max:128}).matches(/[a-z]/).matches(/[A-Z]/).matches(/[0-9]/),validate],asyncHandler(c.register));
+router.post('/login',[body('email').isEmail().normalizeEmail(),body('password').isString().notEmpty(),validate],asyncHandler(c.login));router.get('/me',auth,asyncHandler(c.me));module.exports=router;
